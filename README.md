@@ -12,6 +12,12 @@ TypeScript + React + Vite 기반 GitHub Pages demo입니다.
   - sharesheet에서 문서/사진/텍스트를 공유하는 시나리오
   - 현재 맥락에 맞는 app을 nudge 형식으로 추천/decision하는 시나리오
 - 선택 결과를 Decision Trace로 추적
+- Demo Architecture Guide 페이지
+  - 기능 설명
+  - Module View
+  - Component-and-Connector View(C&C View)
+  - Interaction / Decision Flow
+  - Mermaid diagram source 포함
 
 ## 설계 매핑
 

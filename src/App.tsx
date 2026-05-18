@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import './App.css'
+import { ArchitectureGuide } from './components/ArchitectureGuide'
 import { EdgeDetails } from './components/EdgeDetails'
 import { GraphView } from './components/GraphView'
 import { TracePanel } from './components/TracePanel'
@@ -103,6 +104,7 @@ function App() {
       </section>
 
       <TracePanel trace={state.trace} />
+      <ArchitectureGuide />
     </main>
   )
 }

@@ -23,7 +23,7 @@ describe('Decision System Demo UI', () => {
     fireEvent.click(screen.getByRole('button', { name: /run nudge scenario/i }))
 
     expect(screen.getByText(/Travel app nudge/i)).toBeInTheDocument()
-    expect(screen.getByText(/feature-arrival-travel-context/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/feature-arrival-travel-context/i).length).toBeGreaterThan(0)
   })
 
   it('shows edge evidence details from the visible edge inspector list', () => {
@@ -34,5 +34,15 @@ describe('Decision System Demo UI', () => {
 
     expect(screen.getByText('edge-feature-travel-ce')).toBeInTheDocument()
     expect(screen.getByText('ce://demo/edge-feature-travel-ce')).toBeInTheDocument()
+  })
+
+  it('documents the demo structure with module and C&C views', () => {
+    render(<App />)
+
+    expect(screen.getByRole('heading', { name: /demo architecture guide/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /module view/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /component-and-connector/i })).toBeInTheDocument()
+    expect(screen.getAllByText(/PDE Feature Data.*Context Engine.*Current Info/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/graphStore/i).length).toBeGreaterThan(0)
   })
 })
