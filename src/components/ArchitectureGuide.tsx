@@ -1,3 +1,21 @@
+import mermaid from 'mermaid'
+import { useEffect, useId, useState } from 'react'
+
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: 'strict',
+  theme: 'dark',
+  themeVariables: {
+    background: '#07101f',
+    primaryColor: '#172338',
+    primaryTextColor: '#eef5ff',
+    primaryBorderColor: '#67e8f9',
+    lineColor: '#93a4c0',
+    secondaryColor: '#0f172a',
+    tertiaryColor: '#1e293b',
+  },
+})
+
 const moduleView = `flowchart TB
   subgraph UI[UI Layer]
     App[App.tsx\nPage composition / state owner]
@@ -83,10 +101,54 @@ const featureFlowView = `sequenceDiagram
   Trace-->>UI: show traceable recommendation`
 
 function MermaidBlock({ title, diagram }: { title: string; diagram: string }) {
+  const reactId = useId()
+  const diagramId = `mermaid-${reactId.replace(/[^a-zA-Z0-9_-]/g, '')}`
+  const [renderedSvg, setRenderedSvg] = useState<string | null>(null)
+  const [renderError, setRenderError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function renderDiagram() {
+      try {
+        const { svg } = await mermaid.render(diagramId, diagram)
+        if (!cancelled) {
+          setRenderedSvg(svg)
+          setRenderError(null)
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setRenderedSvg(null)
+          setRenderError(error instanceof Error ? error.message : 'Failed to render Mermaid diagram')
+        }
+      }
+    }
+
+    void renderDiagram()
+
+    return () => {
+      cancelled = true
+    }
+  }, [diagram, diagramId])
+
   return (
     <figure className="mermaid-card">
       <figcaption>{title}</figcaption>
-      <pre className="mermaid"><code>{diagram}</code></pre>
+      {renderedSvg ? (
+        <div
+          className="mermaid-rendered"
+          data-testid="mermaid-rendered-diagram"
+          aria-label={`${title} rendered Mermaid diagram`}
+          dangerouslySetInnerHTML={{ __html: renderedSvg }}
+        />
+      ) : (
+        <pre className="mermaid-source"><code>{diagram}</code></pre>
+      )}
+      {renderError ? <p className="mermaid-error">Mermaid render failed: {renderError}</p> : null}
+      <details className="mermaid-source-details">
+        <summary>Mermaid source</summary>
+        <pre><code>{diagram}</code></pre>
+      </details>
     </figure>
   )
 }
